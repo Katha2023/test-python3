@@ -9,7 +9,7 @@ from joblib import Parallel, delayed
 import multiprocessing as mp
 import time
 import warnings
-warnings.filterwarnings("ignore", category=FutureWarning)
+warnings.filterwarnings("ignore")
 
 # tqdm progress bar for joblib
 from tqdm.auto import tqdm
