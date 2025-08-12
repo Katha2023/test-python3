@@ -109,3 +109,26 @@ for tau_val in taus:
     all_task_times.append(task_times)
 
 print("\nAll sweeps completed.")
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+def summarize_time_series(ts):
+    n = len(ts)
+    return np.mean(ts[int(n*0.8):])
+
+summary_matrix = np.array([
+    [summarize_time_series(pop_matrix[i]) for i in range(pop_matrix.shape[0])]
+    for pop_matrix in all_pop_matrices
+])
+
+plt.figure(figsize=(8, 6))
+extent = [wm_vals[0]/(2*np.pi), wm_vals[-1]/(2*np.pi), taus[0], taus[-1]]
+plt.imshow(summary_matrix, extent=extent, aspect='auto', origin='lower', cmap='viridis')
+plt.colorbar(label="Avg population (last 20% of time)")
+plt.xlabel("Modulation frequency ωm / 2π (Hz)")
+plt.ylabel("Pulse width τ")
+plt.title("Population vs Modulation Frequency and Pulse Width")
+plt.gca().invert_yaxis()  # invert y-axis
+plt.savefig("population_vs_wm_tau.png", dpi=300)
+plt.close()
