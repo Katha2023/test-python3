@@ -1,0 +1,5 @@
+qutip
+joblib
+tqdm
+numpy
+matplotlib
