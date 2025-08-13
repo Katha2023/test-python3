@@ -125,7 +125,7 @@ summary_matrix = np.array([
 plt.figure(figsize=(8, 6))
 extent = [wm_vals[0]/(2*np.pi), wm_vals[-1]/(2*np.pi), taus[0], taus[-1]]
 plt.imshow(summary_matrix, extent=extent, aspect='auto', origin='lower', cmap='RdBu')
-plt.colorbar(label="Avg population (last 20% of time)")
+plt.colorbar(label="Avg population")
 plt.xlabel("Modulation frequency ωm / 2π (Hz)")
 plt.ylabel("Pulse width τ")
 plt.title("Population vs Modulation Frequency and Pulse Width")
