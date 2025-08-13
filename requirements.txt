@@ -3,3 +3,6 @@ joblib
 tqdm
 numpy
 matplotlib
+cython
+setuptools
+filelock
