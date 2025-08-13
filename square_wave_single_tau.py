@@ -1,15 +1,10 @@
-import os
-import sys
-import numpy as np
+import contextlib, os, sys, time, warnings
 import matplotlib.pyplot as plt
-from qutip import *
-from joblib import Parallel, delayed
 import multiprocessing as mp
-import time
-import warnings
-import contextlib
+import numpy as np
+from joblib import Parallel, parallel, delayed
+from qutip import *
 from tqdm.auto import tqdm
-from joblib import parallel
 
 # -----------------------------
 # Handle console argument for tau
