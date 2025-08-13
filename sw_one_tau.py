@@ -33,9 +33,9 @@ def tqdm_joblib(tqdm_object):
 
 wc = 3.4375 * 2 * np.pi
 wa_bar = 2.137  * 2 * np.pi
-A  = 0.02     * 2 * np.pi
-g  = 0.05    * 2 * np.pi
-kappa = 0.0004
+A = 0.05*2* np.pi        # Modulation amplitude
+g  = 0.15 * 2 * np.pi      # Coupling
+kappa = 0.0004*2*np.pi 
 N = 5
 tau = 350
 T = 700
@@ -99,7 +99,7 @@ print(f"Per-task mesolve time: min={task_times.min():.3f}s  "
 # -------- Plot --------
 Tgrid, WMgrid = np.meshgrid(tlist, wm_vals / (2 * np.pi))
 plt.figure(figsize=(9, 5))
-c = plt.contourf(Tgrid, WMgrid, pop_matrix, levels=100, cmap='RdBu')
+c = plt.contourf(Tgrid, WMgrid, pop_matrix, levels=100, cmap='viridis_r')
 plt.xlabel("Time")
 plt.ylabel("Modulation frequency $\\omega_m / 2\\pi$ (Hz)")
 plt.title("Contour plot of ⟨σ⁺σ⁻⟩ vs modulation frequency and time")
