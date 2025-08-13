@@ -5,4 +5,4 @@ python3 -m venv myenv
 source myenv/bin/activate
 
 pip3 install -r requirements
-python3 square_wave_opt.py
+python3 square_wave_single_tau.py 350
