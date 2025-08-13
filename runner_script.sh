@@ -1,5 +1,5 @@
 sudo apt update
-sudo apt install python3-pip python3-venv
+sudo apt install python3-pip python3-venv zip
 
 python3 -m venv myenv
 source myenv/bin/activate
@@ -16,6 +16,8 @@ for tau in $taus; do
 done
 
 python3 plotter.py 10000
+
+zip -r simulation_output.zip results plots time_slice_heatmap.png
 
 rm -rf results
 rm -rf plots
