@@ -1,9 +1,11 @@
-sudo apt update
-sudo apt install python3-pip python3-venv zip
+set -e
+
+sudo apt -y update
+sudo apt -y install python3-pip python3-venv zip
 
 python3 -m venv myenv
 source myenv/bin/activate
-pip3 install -r requirements
+pip3 install -r requirements.txt
 
 mkdir results
 mkdir plots
