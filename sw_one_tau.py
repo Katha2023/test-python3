@@ -67,7 +67,7 @@ def solve_one(idx, wm):
     args = {'tau': float(tau), 'T': float(T), 'wm': float(wm), 'A': float(A), 'wa_bar': float(wa_bar)}
     H = [H0, [sigp_sig, pulsed_wq]]
     t0 = time.perf_counter()
-    res = mesolve(H, rho0, tlist, c_ops, [sigp_sig], args=args, options=opts)
+    res = mesolve(H, rho0, tlist, c_ops, e_ops=[sigp_sig], args=args, options=opts)
     dt = time.perf_counter() - t0
     return idx, np.asarray(res.expect[0], dtype=np.float32), dt
 
