@@ -34,11 +34,14 @@ opts = {'nsteps': 50000}
 
 td_expr = 'wa_bar + A*cos(wm*t) if (t % T) < tau else wa_bar'
 
-pop_matrices = []
+pop_matrices = []        # stores time slice for each τ
+full_dynamics = []       # stores full dynamics for each τ
+
 start_time = time.time()
 
 desired_time = 10000
 t_index = np.argmin(np.abs(tlist - desired_time))
+
 for tau in tau_vals:
     T = 2 * tau
     H_td = [H0, [sigp_sig, td_expr]]
@@ -52,47 +55,56 @@ for tau in tau_vals:
             'wa_bar': float(wa_bar)
         }
         result = mesolve(H_td, rho0, tlist, c_ops, e_ops=e_ops, args=args, options=opts)
-        return np.real(result.expect[0])
+        return np.real(result.expect[0])  # full dynamics
 
     n_cpus = max(1, cpu_count())
     print(f"Using {n_cpus} worker processes for parallel execution...")
 
     wm_list = [float(w) for w in wm_vals]
     with Pool(processes=n_cpus) as pool:
-        results = []
-        for res in tqdm(pool.imap_unordered(solve_for_wm, wm_list), 
-                        total=len(wm_list), desc="Solving"):
-            results.append(res[t_index])
+        all_results = list(tqdm(pool.imap_unordered(solve_for_wm, wm_list),
+                                total=len(wm_list), desc=f"Solving τ={tau}"))
 
-    pop_matrix = np.array(results)
-    pop_matrices.append(pop_matrix)
+    # Sort results by wm_vals order (since imap_unordered scrambles them)
+    sorted_results = [res for _, res in sorted(zip(wm_list, all_results), key=lambda x: x[0])]
+
+    full_dynamics.append(np.array(sorted_results))         # store full evolution
+    pop_matrices.append([res[t_index] for res in sorted_results])  # store time slice
+
+    # --- Plot full dynamics for this τ ---
+    T_mesh, WM_mesh = np.meshgrid(tlist, wm_vals / (2 * np.pi))  # GHz units
+    plt.figure(figsize=(9, 5))
+    c = plt.contourf(T_mesh, WM_mesh, np.array(sorted_results), levels=100, cmap='viridis_r')
+    plt.xlabel("Time [ns]")
+    plt.ylabel("Modulation frequency $\\omega_m / 2\\pi$ (GHz)")
+    plt.title(f"Contour plot of ⟨σ⁺σ⁻⟩ vs ωₘ and time (τ={tau} ns)")
+    plt.colorbar(c, label="⟨σ⁺σ⁻⟩")
+    plt.tight_layout()
+    plt.savefig(f"contour_tau_{tau}.png", dpi=300)
+    plt.close()
 
 elapsed = time.time() - start_time
 print(f"Simulation finished in {elapsed:.2f} seconds.")
-data = np.array(pop_matrices)
 
+# --- Plot time slice heatmap (τ vs wm) ---
+data = np.array(pop_matrices)  # shape: [len(tau_vals), len(wm_vals)]
 fig, ax = plt.subplots(figsize=(10, 8), dpi=150)
 
-im = ax.imshow(data, aspect='auto', origin='lower',
-               cmap='RdBu', interpolation='nearest')
-
+im = ax.imshow(data, aspect='auto', origin='lower', cmap='RdBu', interpolation='nearest')
 cbar = fig.colorbar(im, ax=ax)
 cbar.ax.tick_params(labelsize=16, width=2)
 cbar.set_label(label=r"Probability [$P_e$]", size=18, weight='bold')
 
 n_tau, n_freq = data.shape
-
 xtick_idx = np.linspace(0, n_freq-1, 10, dtype=int)
 xtick_labels = np.round(wm_vals[xtick_idx] / (2*np.pi), 4)
 ax.set_xticks(xtick_idx)
 ax.set_xticklabels(xtick_labels, fontsize=14)
-ax.tick_params(axis='x', which='major', length=6, width=2)
 
 ytick_idx = np.arange(n_tau)
 ytick_labels = tau_vals
 ax.set_yticks(ytick_idx)
 ax.set_yticklabels(ytick_labels, fontsize=14)
-ax.tick_params(axis='y', which='major', length=6, width=2)
 
 im.set_clim(0.0, 1.0)
 ax.set_xlabel("Modulation Frequency [GHz]", fontsize=18, weight='bold')
@@ -100,5 +112,5 @@ ax.set_ylabel(r"$\tau$ [ns]", fontsize=18, weight='bold')
 ax.set_title(f"Qubit Probability at t = {desired_time} ns", fontsize=20, weight='bold', pad=15)
 
 plt.tight_layout()
-plt.savefig("plot.png", dpi=300, bbox_inches='tight')  # high-quality output
+plt.savefig("time_slice_heatmap.png", dpi=300, bbox_inches='tight')
 plt.close()
