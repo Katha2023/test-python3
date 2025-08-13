@@ -15,5 +15,7 @@ for tau in $taus; do
     python3 square_wave_single_tau.py "$tau"
 done
 
+python3 plotter.py 10000
+
 rm -rf results
 rm -rf plots
