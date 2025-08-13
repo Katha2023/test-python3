@@ -30,7 +30,7 @@ if kappa > 0.0:
 
 H0 = wc * adag_a + g * (a.dag()*sm + a*sm.dag())
 e_ops = [sigp_sig]
-opts = Options(nsteps=50000)
+opts = {nsteps=50000}
 
 td_expr = 'wa_bar + A*cos(wm*t) if (t % T) < tau else wa_bar'
 
