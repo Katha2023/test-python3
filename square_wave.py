@@ -40,7 +40,7 @@ gamma  = 0.0
 N = 5
 
 tlist = np.linspace(0, 80000, 1000)
-wm_vals = np.linspace(1.305, 1.312, 100) * 2 * np.pi  # rad/s
+wm_vals = np.linspace(1.280, 1.320, 100) * 2 * np.pi  # rad/s
 
 a = tensor(destroy(N), qeye(2))
 sm = tensor(qeye(N), destroy(2))
@@ -124,7 +124,7 @@ summary_matrix = np.array([
 
 plt.figure(figsize=(8, 6))
 extent = [wm_vals[0]/(2*np.pi), wm_vals[-1]/(2*np.pi), taus[0], taus[-1]]
-plt.imshow(summary_matrix, extent=extent, aspect='auto', origin='lower', cmap='viridis')
+plt.imshow(summary_matrix, extent=extent, aspect='auto', origin='lower', cmap='RdBu')
 plt.colorbar(label="Avg population (last 20% of time)")
 plt.xlabel("Modulation frequency ωm / 2π (Hz)")
 plt.ylabel("Pulse width τ")
