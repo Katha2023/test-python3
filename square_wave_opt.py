@@ -12,7 +12,7 @@ g  = 0.05 * 2 * np.pi
 kappa = 0.0004
 N = 5
 
-tlist = np.linspace(0, 300, 1000)
+tlist = np.linspace(0, 80000, 1000)
 wm_vals = np.linspace(1.28,1.32, 100) * 2 * np.pi
 tau_vals = np.linspace(300, 400, 25)
 tau_vals = np.array([350, 400])
@@ -37,7 +37,7 @@ td_expr = 'wa_bar + A*cos(wm*t) if (t % T) < tau else wa_bar'
 pop_matrices = []
 start_time = time.time()
 
-desired_time = 300
+desired_time = 10000
 t_index = np.argmin(np.abs(tlist - desired_time))
 for tau in tau_vals:
     T = 2 * tau
