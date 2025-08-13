@@ -67,7 +67,8 @@ opts = {"nsteps": 100000, "store_states": False, "progress_bar": None, "atol": 1
 n_jobs = max(1, mp.cpu_count())
 print(f"Using {n_jobs} parallel workers.")
 
-taus = np.linspace(300, 400, 25)
+#taus = np.linspace(300, 400, 25)
+taus = np.array([350, 400])
 
 all_pop_matrices = []
 all_task_times = []
