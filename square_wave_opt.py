@@ -60,29 +60,29 @@ for tau in tau_vals:
         for res in tqdm(pool.imap_unordered(solve_for_wm, wm_list), total=len(wm_list), desc="Solving"):
             results.append(res)
     pop_matrix = np.vstack(results)
-    pop_matrices.append(pop_matrix[:, -1])
+    print(pop_matrix)
+    pop_matrices.append(pop_matrix)
     
 elapsed = time.time() - start_time
 print(f"Simulation finished in {elapsed:.2f} seconds.")
 
-data_to_plot = np.array(pop_matrices)
+data = np.array(pop_matrices)
 
-plt.figure(figsize=(10,6))
-im = plt.imshow(data_to_plot, aspect='auto', origin='lower', cmap='RdBu', interpolation='nearest')
+im = plt.imshow(data, aspect='auto', origin='lower', cmap='RdBu', interpolation='nearest')
 cbar = plt.colorbar()
 cbar.ax.tick_params(labelsize=18)
 cbar.set_label(label=f"Probability [$P_e$]", size=18)
 
-n_tau, n_freq = data_to_plot.shape
+n_tau, n_freq = data.shape
 xtick_idx = np.linspace(0, n_freq-1, 10, dtype=int)
-xtick_labels = np.round(np.array(wm_vals)[xtick_idx]/(2*np.pi)*1e-9, 4)
+xtick_labels = np.round(np.array(mod_freq_list)[xtick_idx]*1e-9, 4)
 plt.xticks(xtick_idx, xtick_labels, fontsize=16)
-plt.yticks(np.arange(n_tau), tau_vals, fontsize=18)
+plt.yticks(np.arange(n_tau), tau_list, fontsize=18)
 plt.clim(0.0, 1.0)
 
 plt.xlabel("Modulation Frequency [GHz]", fontsize=20)
 plt.ylabel(r"$\tau$ [ns]", fontsize=20)
-plt.title(f"Qubit decay after {tlist[-1]*1e-9:.2f} μs @ {A/(2*np.pi):.2f} GHz mod. amplitude", fontsize=20)
+plt.title(f"Qubit decay after 10 μs @ {mod_pow} dBm mod. power", fontsize=20)
 plt.tight_layout()
 plt.savefig("plot.png")
 plt.close()
