@@ -32,10 +32,11 @@ H0 = wc * adag_a + g * (a.dag()*sm + a*sm.dag())
 e_ops = [sigp_sig]
 opts = Options(nsteps=50000)
 
+td_expr = 'wa_bar + A*cos(wm*t) if (t % T) < tau else wa_bar'
+
 start_time = time.time()
 for tau in tau_vals:
     T = 2*tau
-    td_expr = 'wa_bar + A*cos(wm*t) if (t % T) < tau else wa_bar'
     H_td = [H0, [sigp_sig, td_expr]]
     
     def solve_for_wm(wm):
