@@ -99,7 +99,7 @@ print(f"Per-task mesolve time: min={task_times.min():.3f}s  "
 # -------- Plot --------
 Tgrid, WMgrid = np.meshgrid(tlist, wm_vals / (2 * np.pi))
 plt.figure(figsize=(9, 5))
-c = plt.contourf(Tgrid, WMgrid, pop_matrix, levels=100, cmap='viridis_r')
+c = plt.contourf(Tgrid, WMgrid, pop_matrix, levels=100, cmap='RdBu')
 plt.xlabel("Time")
 plt.ylabel("Modulation frequency $\\omega_m / 2\\pi$ (Hz)")
 plt.title("Contour plot of ⟨σ⁺σ⁻⟩ vs modulation frequency and time")
