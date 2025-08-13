@@ -37,7 +37,7 @@ td_expr = 'wa_bar + A*cos(wm*t) if (t % T) < tau else wa_bar'
 pop_matrices = []
 start_time = time.time()
 
-desired_time = 10
+desired_time = 300
 t_index = np.argmin(np.abs(tlist - desired_time))
 for tau in tau_vals:
     T = 2 * tau
@@ -71,26 +71,34 @@ elapsed = time.time() - start_time
 print(f"Simulation finished in {elapsed:.2f} seconds.")
 data = np.array(pop_matrices)
 
-im = plt.imshow(data, aspect='auto', origin='lower',
-                cmap='RdBu', interpolation='nearest')
+fig, ax = plt.subplots(figsize=(10, 8), dpi=150)
 
-cbar = plt.colorbar()
-cbar.ax.tick_params(labelsize=18)
-cbar.set_label(label=f"Probability [$P_e$]", size=18)
+im = ax.imshow(data, aspect='auto', origin='lower',
+               cmap='RdBu', interpolation='nearest')
+
+cbar = fig.colorbar(im, ax=ax)
+cbar.ax.tick_params(labelsize=16, width=2)
+cbar.set_label(label=r"Probability [$P_e$]", size=18, weight='bold')
 
 n_tau, n_freq = data.shape
 
 xtick_idx = np.linspace(0, n_freq-1, 10, dtype=int)
-xtick_labels = np.round(wm_vals[xtick_idx] / (2*np.pi) , 4)
-plt.xticks(xtick_idx, xtick_labels, fontsize=16)
+xtick_labels = np.round(wm_vals[xtick_idx] / (2*np.pi), 4)
+ax.set_xticks(xtick_idx)
+ax.set_xticklabels(xtick_labels, fontsize=14)
+ax.tick_params(axis='x', which='major', length=6, width=2)
+
 ytick_idx = np.arange(n_tau)
 ytick_labels = tau_vals
-plt.yticks(ytick_idx, ytick_labels, fontsize=18)
+ax.set_yticks(ytick_idx)
+ax.set_yticklabels(ytick_labels, fontsize=14)
+ax.tick_params(axis='y', which='major', length=6, width=2)
 
-plt.clim(0.0, 1.0)
-plt.xlabel("Modulation Frequency [GHz]", fontsize=20)
-plt.ylabel(r"$\tau$ [ns]", fontsize=20)
-plt.title(f"Qubit probability at t = {desired_time} ns", fontsize=20)
+im.set_clim(0.0, 1.0)
+ax.set_xlabel("Modulation Frequency [GHz]", fontsize=18, weight='bold')
+ax.set_ylabel(r"$\tau$ [ns]", fontsize=18, weight='bold')
+ax.set_title(f"Qubit Probability at t = {desired_time} ns", fontsize=20, weight='bold', pad=15)
+
 plt.tight_layout()
-plt.savefig("plot.png")
+plt.savefig("plot.png", dpi=300, bbox_inches='tight')  # high-quality output
 plt.close()
