@@ -111,7 +111,6 @@ for tau_val in taus:
 
 print("\nAll sweeps completed.")
 
-'''
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -132,36 +131,5 @@ plt.xlabel("Modulation frequency ωm / 2π (Hz)")
 plt.ylabel("Pulse width τ")
 plt.title("Population vs Modulation Frequency and Pulse Width")
 plt.gca().invert_yaxis()  # invert y-axis
-plt.savefig("population_vs_wm_tau.png", dpi=300)
-plt.close()
-'''
-
-pop_3d = np.array(all_pop_matrices)  # shape (len(taus), len(wm_vals), len(tlist))
-
-# Reshape so that for each tau, all wm*time are concatenated horizontally
-rows = len(taus)
-cols = len(wm_vals) * len(tlist)
-
-image = np.zeros((rows, cols), dtype=np.float32)
-
-for tau_idx in range(rows):
-    for wm_idx in range(len(wm_vals)):
-        start = wm_idx * len(tlist)
-        end = start + len(tlist)
-        image[tau_idx, start:end] = pop_3d[tau_idx, wm_idx]
-
-extent = [
-    wm_vals[0]/(2*np.pi),  # left
-    wm_vals[-1]/(2*np.pi) * len(tlist),  # right (scaled by time length)
-    taus[0], taus[-1]
-]
-
-plt.figure(figsize=(16, 8))
-plt.imshow(image, aspect='auto', origin='lower', cmap='RdBu')
-plt.colorbar(label='Population')
-plt.xlabel('Modulation frequency ωm / 2π (Hz)')
-plt.ylabel('Pulse width τ')
-plt.title('Population time series per (τ, ωm) unrolled along X')
-plt.gca().invert_yaxis()
 plt.savefig("population_vs_wm_tau.png", dpi=300)
 plt.close()
