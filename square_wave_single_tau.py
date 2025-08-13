@@ -45,7 +45,7 @@ g = 0.05 * 2 * np.pi
 kappa = 0.0004
 N = 5
 
-tlist = np.linspace(0, 80000, 300)
+tlist = np.linspace(0, 80000, 1000)
 wm_vals = np.linspace(1.28, 1.32, 100) * 2 * np.pi
 
 a = tensor(destroy(N), qeye(2))
