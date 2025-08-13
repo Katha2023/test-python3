@@ -3,7 +3,6 @@ os.environ["OMP_NUM_THREADS"] = "1"
 os.environ["MKL_NUM_THREADS"] = "1"
 
 import numpy as np
-import matplotlib.pyplot as plt
 from qutip import *
 from joblib import Parallel, delayed
 import multiprocessing as mp
@@ -11,7 +10,6 @@ import time
 import warnings
 warnings.filterwarnings("ignore")
 
-# tqdm progress bar for joblib
 from tqdm.auto import tqdm
 from joblib import parallel
 import contextlib
@@ -67,7 +65,6 @@ opts = {"nsteps": 100000, "store_states": False, "progress_bar": None, "atol": 1
 n_jobs = max(1, mp.cpu_count())
 print(f"Using {n_jobs} parallel workers.")
 
-#taus = np.linspace(300, 400, 25)
 taus = np.array([350, 400])
 
 all_pop_matrices = []
@@ -109,9 +106,14 @@ for tau_val in taus:
     all_pop_matrices.append(pop_matrix)
     all_task_times.append(task_times)
 
+    # Save full dataset for this tau:
+    filename = f"population_vs_wm_tau_{int(tau_val)}.csv"
+    np.savetxt(filename, pop_matrix, delimiter=",")
+    print(f"Saved population matrix for tau={tau_val:.1f} to '{filename}'")
+
 print("\nAll sweeps completed.")
 
-import numpy as np
+'''
 import matplotlib.pyplot as plt
 
 def summarize_time_series(ts):
@@ -133,3 +135,4 @@ plt.title("Population vs Modulation Frequency and Pulse Width")
 plt.gca().invert_yaxis()  # invert y-axis
 plt.savefig("population_vs_wm_tau.png", dpi=300)
 plt.close()
+'''
