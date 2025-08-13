@@ -12,7 +12,7 @@ g  = 0.05 * 2 * np.pi
 kappa = 0.0004
 N = 5
 
-tlist = np.linspace(0, 80000, 1000)
+tlist = np.linspace(0, 300, 1000)
 wm_vals = np.linspace(1.28,1.32, 100) * 2 * np.pi
 tau_vals = np.linspace(300, 400, 25)
 tau_vals = np.array([350, 400])
@@ -36,10 +36,13 @@ td_expr = 'wa_bar + A*cos(wm*t) if (t % T) < tau else wa_bar'
 
 pop_matrices = []
 start_time = time.time()
+
+desired_time = 10
+t_index = np.argmin(np.abs(tlist - desired_time))
 for tau in tau_vals:
-    T = 2*tau
+    T = 2 * tau
     H_td = [H0, [sigp_sig, td_expr]]
-    
+
     def solve_for_wm(wm):
         args = {
             'tau': float(tau),
@@ -50,39 +53,44 @@ for tau in tau_vals:
         }
         result = mesolve(H_td, rho0, tlist, c_ops, e_ops=e_ops, args=args, options=opts)
         return np.real(result.expect[0])
-    
+
     n_cpus = max(1, cpu_count())
     print(f"Using {n_cpus} worker processes for parallel execution...")
-    
+
     wm_list = [float(w) for w in wm_vals]
     with Pool(processes=n_cpus) as pool:
         results = []
-        for res in tqdm(pool.imap_unordered(solve_for_wm, wm_list), total=len(wm_list), desc="Solving"):
-            results.append(res)
-    pop_matrix = np.vstack(results)
-    print(pop_matrix)
+        for res in tqdm(pool.imap_unordered(solve_for_wm, wm_list), 
+                        total=len(wm_list), desc="Solving"):
+            results.append(res[t_index])
+
+    pop_matrix = np.array(results)
     pop_matrices.append(pop_matrix)
-    
+
 elapsed = time.time() - start_time
 print(f"Simulation finished in {elapsed:.2f} seconds.")
-
 data = np.array(pop_matrices)
 
-im = plt.imshow(data, aspect='auto', origin='lower', cmap='RdBu', interpolation='nearest')
+im = plt.imshow(data, aspect='auto', origin='lower',
+                cmap='RdBu', interpolation='nearest')
+
 cbar = plt.colorbar()
 cbar.ax.tick_params(labelsize=18)
 cbar.set_label(label=f"Probability [$P_e$]", size=18)
 
 n_tau, n_freq = data.shape
-xtick_idx = np.linspace(0, n_freq-1, 10, dtype=int)
-xtick_labels = np.round(np.array(mod_freq_list)[xtick_idx]*1e-9, 4)
-plt.xticks(xtick_idx, xtick_labels, fontsize=16)
-plt.yticks(np.arange(n_tau), tau_list, fontsize=18)
-plt.clim(0.0, 1.0)
 
+xtick_idx = np.linspace(0, n_freq-1, 10, dtype=int)
+xtick_labels = np.round(wm_vals[xtick_idx] / (2*np.pi) , 4)
+plt.xticks(xtick_idx, xtick_labels, fontsize=16)
+ytick_idx = np.arange(n_tau)
+ytick_labels = tau_vals
+plt.yticks(ytick_idx, ytick_labels, fontsize=18)
+
+plt.clim(0.0, 1.0)
 plt.xlabel("Modulation Frequency [GHz]", fontsize=20)
 plt.ylabel(r"$\tau$ [ns]", fontsize=20)
-plt.title(f"Qubit decay after 10 μs @ {mod_pow} dBm mod. power", fontsize=20)
+plt.title(f"Qubit probability at t = {desired_time} ns", fontsize=20)
 plt.tight_layout()
 plt.savefig("plot.png")
 plt.close()
