@@ -33,15 +33,15 @@ def tqdm_joblib(tqdm_object):
 
 wc = 3.4375 * 2 * np.pi
 wa_bar = 2.137  * 2 * np.pi
-A = 0.05*2* np.pi        # Modulation amplitude
-g  = 0.15 * 2 * np.pi      # Coupling
-kappa = 0.0004*2*np.pi 
+A = 0.3*2* np.pi        # Modulation amplitude
+g  = 0.05 * 2 * np.pi      # Coupling
+kappa = 0.0004
 N = 5
 tau = 350
 T = 700
 
 tlist = np.linspace(0, 80000, 300)
-wm_vals = np.linspace(1.28, 1.32, 200) * 2 * np.pi  # rad/s
+wm_vals = np.linspace(1.28, 1.32, 100) * 2 * np.pi  # rad/s
 
 a = tensor(destroy(N), qeye(2))
 sm = tensor(qeye(N), destroy(2))
