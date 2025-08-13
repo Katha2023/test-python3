@@ -21,3 +21,4 @@ zip -r simulation_output.zip results plots time_slice_heatmap.png
 
 rm -rf results
 rm -rf plots
+rm -rf myenv
