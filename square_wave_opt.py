@@ -10,6 +10,9 @@ start_time = time.time()
 pop_matrices = []        # stores time slice for each τ
 full_dynamics = []       # stores full dynamics for each τ
 
+#tau_vals = np.linspace(300, 400, 25)
+tau_vals = np.array([350, 400])
+
 for tau in tau_vals:
     wc = 3.4375 * 2 * np.pi
     wa_bar = 2.137 * 2 * np.pi
@@ -20,8 +23,6 @@ for tau in tau_vals:
     
     tlist = np.linspace(0, 80000, 1000)
     wm_vals = np.linspace(1.28,1.32, 100) * 2 * np.pi
-    tau_vals = np.linspace(300, 400, 25)
-    tau_vals = np.array([350, 400])
     
     a = tensor(destroy(N), qeye(2))
     sm = tensor(qeye(N), destroy(2))
