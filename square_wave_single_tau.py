@@ -93,6 +93,7 @@ for i, vec, dt in results:
     pop_matrix[i, :] = vec
     task_times[i] = dt
 
+np.save(f"pop_matrix_{tau}.npy", pop_matrix)
 print(f"Per-task mesolve time: min={task_times.min():.3f}s  median={np.median(task_times):.3f}s  max={task_times.max():.3f}s")
 
 Tgrid, WMgrid = np.meshgrid(tlist, wm_vals / (2 * np.pi))
