@@ -115,7 +115,7 @@ import matplotlib.pyplot as plt
 
 def summarize_time_series(ts):
     n = len(ts)
-    return np.mean(ts[int(n*0.8):])
+    return np.mean(ts)
 
 summary_matrix = np.array([
     [summarize_time_series(pop_matrix[i]) for i in range(pop_matrix.shape[0])]
