@@ -10,7 +10,7 @@ def rastrigin(X):
     n_dimensions = X.shape[1]
     return np.sum(X**2 - 10 * np.cos(2 * np.pi * X), axis=1) + 10 * n_dimensions
 
-n_dimensions = 5
+n_dimensions = 10000
 lower_bounds = np.array([-4]*n_dimensions)
 upper_bounds = np.array([5.12]*n_dimensions)
 bounds = [(low, high) for low, high in zip(lower_bounds, upper_bounds)]
