@@ -8,6 +8,7 @@ if len(sys.argv) < 2:
 
 tau_vals = np.array([350.0, 400.0])
 wm_vals = np.linspace(1.28, 1.32, 100) * 2 * np.pi
+tlist = np.linspace(0, 80000, 1000)
 desired_time = float(sys.argv[1])
 
 pop_slices = []
