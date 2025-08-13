@@ -43,13 +43,12 @@ desired_time = 10000
 t_index = np.argmin(np.abs(tlist - desired_time))
 
 for tau in tau_vals:
-    T = 2 * tau
     H_td = [H0, [sigp_sig, td_expr]]
 
     def solve_for_wm(wm):
         args = {
             'tau': float(tau),
-            'T': float(T),
+            'T': float(2*tau),
             'wm': float(wm),
             'A': float(A),
             'wa_bar': float(wa_bar)
