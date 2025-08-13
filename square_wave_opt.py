@@ -30,10 +30,11 @@ if kappa > 0.0:
 
 H0 = wc * adag_a + g * (a.dag()*sm + a*sm.dag())
 e_ops = [sigp_sig]
-opts = {nsteps=50000}
+opts = {'nsteps': 50000}
 
 td_expr = 'wa_bar + A*cos(wm*t) if (t % T) < tau else wa_bar'
 
+pop_matrices = []
 start_time = time.time()
 for tau in tau_vals:
     T = 2*tau
@@ -59,18 +60,28 @@ for tau in tau_vals:
         for res in tqdm(pool.imap_unordered(solve_for_wm, wm_list), total=len(wm_list), desc="Solving"):
             results.append(res)
     pop_matrix = np.vstack(results)
+    pop_matrices.append(pop_matrix[:, -1])
     
 elapsed = time.time() - start_time
 print(f"Simulation finished in {elapsed:.2f} seconds.")
 
-print("Plotting...")
-plt.figure(figsize=(8, 6))
-pop_matrix = pop_matrix.T
-plt.imshow(pop_matrix, aspect='auto', cmap='RdBu', origin='upper',
-           extent=[wm_vals[0]/(2*np.pi), wm_vals[-1]/(2*np.pi), tau_vals[-1], tau_vals[0]])
-plt.colorbar(label='Probability')
-plt.xlabel('Modulation frequency ωm / 2π')
-plt.ylabel('τ')
-plt.title('Qubit Decay')
-plt.savefig("plot.png")
-plt.close()
+data_to_plot = np.array(pop_matrices)
+
+plt.figure(figsize=(10,6))
+im = plt.imshow(data_to_plot, aspect='auto', origin='lower', cmap='RdBu', interpolation='nearest')
+cbar = plt.colorbar()
+cbar.ax.tick_params(labelsize=18)
+cbar.set_label(label=f"Probability [$P_e$]", size=18)
+
+n_tau, n_freq = data_to_plot.shape
+xtick_idx = np.linspace(0, n_freq-1, 10, dtype=int)
+xtick_labels = np.round(np.array(wm_vals)[xtick_idx]/(2*np.pi)*1e-9, 4)
+plt.xticks(xtick_idx, xtick_labels, fontsize=16)
+plt.yticks(np.arange(n_tau), tau_vals, fontsize=18)
+plt.clim(0.0, 1.0)
+
+plt.xlabel("Modulation Frequency [GHz]", fontsize=20)
+plt.ylabel(r"$\tau$ [ns]", fontsize=20)
+plt.title(f"Qubit decay after {tlist[-1]*1e-9:.2f} μs @ {A/(2*np.pi):.2f} GHz mod. amplitude", fontsize=20)
+plt.tight_layout()
+plt.show()
