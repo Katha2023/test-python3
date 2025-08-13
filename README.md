@@ -8,7 +8,7 @@ cd test-python3
 * Run the script:
 ```bash
 chmod u+x runner_script.sh
-./activate_env.sh
+./runner_script.sh
 ```
 * Save the png file to remote in local machine from the directory containing ``password.pem``:
 ```pwsh
