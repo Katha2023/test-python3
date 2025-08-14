@@ -10,8 +10,8 @@ pip3 install -r requirements.txt
 mkdir results
 mkdir plots
 
-taus=$(python3 -c "import numpy as np; print(' '.join(str(t) for t in np.array([350, 400])))")
-#taus=$(python3 -c "import numpy as np; print(' '.join(str(t) for t in np.linspace(300, 400, 25)))")
+#taus=$(python3 -c "import numpy as np; print(' '.join(str(t) for t in np.array([350, 400])))")
+taus=$(python3 -c "print(' '.join(str(t) for t in range(300, 401, 4)))")
 for tau in $taus; do
     echo "Running tau=$tau..."
     python3 square_wave_single_tau.py "$tau"
