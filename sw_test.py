@@ -77,7 +77,7 @@ def solve_one_tau(wm, tau):
     return np.asarray(res.expect[0], dtype=np.float32)
 
 # ---- Sweep (parallel in ωm for each τ) ----
-n_jobs = max(1, mp.cpu_count() - 1)
+n_jobs = mp.cpu_count()
 print(f"Sweeping {len(taus)} τ-values × {len(wm_vals)} ωm with {n_jobs} workers...")
 
 Pe_map = np.empty((len(taus), len(wm_vals)), dtype=np.float32)
