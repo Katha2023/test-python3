@@ -1,65 +1,75 @@
 import os, sys
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.ticker as mticker
 
 if len(sys.argv) < 2:
-    print("Usage: python script.py <desired_time>")
+    print("Usage: python plotter.py <desired_time>")
     sys.exit(1)
 
-tau_vals = np.array([350.0, 400.0])
-wm_vals = np.linspace(1.28, 1.32, 100) * 2 * np.pi
-tlist = np.linspace(0, 80000, 1000)
+# ---- Config ----
+tau_vals = np.array([350.0, 400.0])  # ns
+wm_vals = np.linspace(1.28, 1.32, 100) * 2 * np.pi  # rad/ns
+tlist = np.linspace(0, 80000, 1000)  # ns
 desired_time = float(sys.argv[1])
 
-pop_slices = []
+# ---- Load data ----
 t_index = np.argmin(np.abs(tlist - desired_time))
-
+pop_slices = []
 for tau in tau_vals:
     filename = f"results/pop_matrix_{tau}.npy"
     if not os.path.exists(filename):
         raise FileNotFoundError(f"{filename} not found")
     pop_matrix = np.load(filename)  # shape: [len(wm_vals), len(tlist)]
-    # pick one time slice for heatmap
-    pop_slice = pop_matrix[:, t_index]  # shape: [len(wm_vals)]
-    pop_slices.append(pop_slice)
+    pop_slices.append(pop_matrix[:, t_index])
 
-# Stack into a 2D array: rows=tau, columns=wm
-pop_matrices = np.stack(pop_slices, axis=0)  # shape: [len(tau_vals), len(wm_vals)]
+data = np.stack(pop_slices, axis=0)  # shape: [len(tau_vals), len(wm_vals)]
+wm_GHz = wm_vals / (2 * np.pi)
 
-# Convert pop_matrices to a 2D array if it’s a list
-data = np.array(pop_matrices)  # shape: [len(tau_vals), len(wm_vals)]
+# ---- Plot ----
+if len(tau_vals) == 1:
+    vals = data[0]
 
-fig, ax = plt.subplots(figsize=(10, 8), dpi=150)
+    fig = plt.figure(figsize=(8, 3.6))
+    gs = fig.add_gridspec(nrows=2, ncols=1, height_ratios=[1.2, 2.0], hspace=0.35)
 
-# Plot the heatmap
-im = ax.imshow(data, aspect='auto', origin='lower', cmap='RdBu', interpolation='nearest')
+    # (a) Heat strip
+    ax0 = fig.add_subplot(gs[0, 0])
+    im = ax0.imshow(vals[None, :],
+                    extent=[wm_GHz.min(), wm_GHz.max(), 0, 1],
+                    aspect='auto', origin='lower',
+                    cmap='RdBu', interpolation='nearest')
+    ax0.set_yticks([])
+    ax0.set_xlabel(r'$\omega_m/2\pi$ (GHz)')
+    ax0.set_title(fr'$P_e$ at $t = {desired_time:.0f}$ ns, $\tau$ = {tau_vals[0]} ns')
+    cbar = plt.colorbar(im, ax=ax0, pad=0.02)
+    cbar.set_label(r'$P_e$')
 
-# Colorbar
-cbar = fig.colorbar(im, ax=ax)
-cbar.ax.tick_params(labelsize=16, width=2)
-cbar.set_label(label=r"Probability [$P_e$]", size=18, weight='bold')
+    # (b) Line plot
+    ax1 = fig.add_subplot(gs[1, 0])
+    ax1.plot(wm_GHz, vals, linewidth=1.8)
+    ax1.set_xlabel(r'$\omega_m/2\pi$ (GHz)')
+    ax1.set_ylabel(r'$P_e$')
+    ax1.xaxis.set_major_locator(mticker.MaxNLocator(6))
+    ax1.grid(True, alpha=0.3)
 
-# X-axis: modulation frequencies in GHz
-n_tau, n_freq = data.shape
-xtick_idx = np.linspace(0, n_freq-1, 10, dtype=int)
-xtick_labels = np.round(wm_vals[xtick_idx] / (2*np.pi), 4)  # convert rad/s → GHz
-ax.set_xticks(xtick_idx)
-ax.set_xticklabels(xtick_labels, fontsize=14)
+    plt.tight_layout()
+    plt.savefig("plot.png", dpi=300, bbox_inches='tight')
+    plt.close()
 
-# Y-axis: tau values
-ytick_idx = np.arange(n_tau)
-ytick_labels = tau_vals
-ax.set_yticks(ytick_idx)
-ax.set_yticklabels(ytick_labels, fontsize=14)
+else:
+    # τ × ωm heatmap
+    fig, ax = plt.subplots(figsize=(8, 4.6))
+    im = ax.imshow(data,
+                   extent=[wm_GHz.min(), wm_GHz.max(), tau_vals.max(), tau_vals.min()],
+                   aspect='auto', origin='upper',
+                   cmap='RdBu', interpolation='nearest')
+    ax.set_xlabel(r'$\omega_m/2\pi$ (GHz)')
+    ax.set_ylabel(r'$\tau$ (ns)')
+    ax.set_title(r'$P_e$ at $t={:.0f}$ ns'.format(desired_time))
+    cbar = plt.colorbar(im, ax=ax, pad=0.02)
+    cbar.set_label(r'$P_e$')
 
-# Set color limits (optional)
-im.set_clim(0.0, 1.0)
-
-# Labels and title
-ax.set_xlabel("Modulation Frequency [GHz]", fontsize=18, weight='bold')
-ax.set_ylabel(r"$\tau$ [ns]", fontsize=18, weight='bold')
-ax.set_title(f"Qubit Probability at t = {desired_time} ns", fontsize=20, weight='bold', pad=15)
-
-plt.tight_layout()
-plt.savefig("time_slice_heatmap.png", dpi=300, bbox_inches='tight')
-plt.close()
+    plt.tight_layout()
+    plt.savefig("plot.png", dpi=300, bbox_inches='tight')
+    plt.close()
