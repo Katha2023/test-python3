@@ -53,8 +53,7 @@ if len(tau_vals) == 1:
     ax1.xaxis.set_major_locator(mticker.MaxNLocator(6))
     ax1.grid(True, alpha=0.3)
 
-    plt.tight_layout()
-    plt.savefig("plot.png", dpi=300, bbox_inches='tight')
+    plt.savefig("time_slice_heatmap.png", dpi=300, bbox_inches='tight')
     plt.close()
 
 else:
@@ -70,6 +69,5 @@ else:
     cbar = plt.colorbar(im, ax=ax, pad=0.02)
     cbar.set_label(r'$P_e$')
 
-    plt.tight_layout()
-    plt.savefig("plot.png", dpi=300, bbox_inches='tight')
+    plt.savefig("time_slice_heatmap.png", dpi=300, bbox_inches='tight')
     plt.close()
