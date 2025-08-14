@@ -45,7 +45,8 @@ i_meas  = int(np.argmin(np.abs(tlist - t_meas)))  # index to read Pe(t=10 μs)
 wm_vals = np.linspace(1.28, 1.32, 100) * 2 * np.pi  # rad/ns (GHz * 2π)
 wm_vals_GHz = wm_vals / (2 * np.pi)                 # for plotting
 
-taus = list(range(300, 401, 4))  # 300, 304, ..., 400 ns
+#taus = list(range(300, 401, 4))  # 300, 304, ..., 400 ns
+taus = [350]
 
 # ---- Operators & init ----
 a        = tensor(destroy(N), qeye(2))
