@@ -20,6 +20,7 @@ done
 python3 plotter.py 9700
 
 zip -r simulation_output.zip results plots time_slice_heatmap.png
+deactivate
 
 rm -rf results
 rm -rf plots
