@@ -8,8 +8,8 @@ if len(sys.argv) < 2:
     sys.exit(1)
 
 # ---- Config ----
-tau_vals = np.array(list(range(200, 301, 4)))  # ns
-wm_vals = np.linspace(1.28, 1.32, 100) * 2 * np.pi  # rad/ns
+tau_vals = np.array(list(range(100, 201, 4)))  # ns
+wm_vals = np.linspace(1.28, 1.33, 100) * 2 * np.pi  # rad/ns
 tlist = np.linspace(0, 80000, 1000)  # ns
 desired_time = float(sys.argv[1])
 
