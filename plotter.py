@@ -17,7 +17,7 @@ desired_time = float(sys.argv[1])
 t_index = np.argmin(np.abs(tlist - desired_time))
 pop_slices = []
 for tau in tau_vals:
-    filename = f"results/pop_matrix_{tau}.npy"
+    filename = f"results/pop_matrix_{float(tau)}.npy"
     if not os.path.exists(filename):
         raise FileNotFoundError(f"{filename} not found")
     pop_matrix = np.load(filename)  # shape: [len(wm_vals), len(tlist)]
