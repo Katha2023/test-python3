@@ -40,7 +40,7 @@ def tqdm_joblib(tqdm_object):
 
 wc = 3.4375 * 2 * np.pi
 wa_bar = 2.137 * 2 * np.pi
-A = 0.2 * 2 * np.pi
+A = 0.3 * 2 * np.pi
 g = 0.05 * 2 * np.pi
 kappa = 0.0004 
 N = 5
