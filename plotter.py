@@ -65,8 +65,10 @@ else:
                    cmap='RdBu', interpolation='nearest')
     ax.set_xlabel(r'$\omega_m/2\pi$ (GHz)')
     ax.set_ylabel(r'$\tau$ (ns)')
-    ax.set_yticks(tau_vals)
-    ax.set_yticklabels([str(t) for t in tau_vals], fontsize=8)
+    step = 5
+    ax.set_yticks(tau_vals[::step])
+    ax.set_yticklabels([str(t) for t in tau_vals[::step]], fontsize=8)
+
     ax.set_title(r'$P_e$ at $t={:.0f}$ ns'.format(desired_time))
     cbar = plt.colorbar(im, ax=ax, pad=0.02)
     cbar.set_label(r'$P_e$')
