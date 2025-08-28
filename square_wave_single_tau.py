@@ -66,7 +66,14 @@ def pulsed_wq(t, args):
     tau = args['tau']; T = args['T']; wm = args['wm']; A = args['A']; wa_bar = args['wa_bar']
     return wa_bar + A * np.cos(wm * t) if (t % T) < tau else wa_bar
 
-opts = {"nsteps": 100000, "store_states": False, "progress_bar": None, "atol": 1e-8, "rtol": 1e-6}
+opts = {
+    "nsteps": 100000, 
+    "store_states": False, 
+    "progress_bar": None, 
+    "atol": 1e-8, 
+    "rtol": 1e-6,
+    "max_step": 1e-4
+}
 
 def solve_one(idx, wm):
     args = {'tau': float(tau), 'T': float(T), 'wm': float(wm), 'A': float(A), 'wa_bar': float(wa_bar)}
